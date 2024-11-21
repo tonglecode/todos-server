@@ -4,8 +4,11 @@ import {
   Column,
   BeforeInsert,
   BaseEntity,
+  OneToMany,
 } from "typeorm";
 import bcrypt from "bcryptjs";
+import { Todo } from "./todo";
+import { Task } from "./task";
 
 export enum Gender {
   MALE = "male",
@@ -26,6 +29,12 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Todo, (todo) => todo.user)
+  todos: Todo[];
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
   @Column({ nullable: true })
   photoBase64: string;
