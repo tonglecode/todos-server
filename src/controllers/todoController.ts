@@ -1,20 +1,31 @@
 import { Request, Response } from "express";
 import { Todo } from "../entities/todo";
 import User from "../entities/user";
+import { Task } from "../entities/task";
 
 const createTodo = async (req: Request, res: Response) => {
-  const { title, isDone } = req.body;
+  const { taskId, title, isDone, subTitle } = req.body;
 
   try {
-    // const todo = Todo.create({ title, isDone });
+    const task = await Task.findOne({ where: { id: taskId } });
+    if (!task) {
+      throw res.status(400).json({ message: "Not found task" });
+    }
+
     const user = await User.findOne({ where: { id: req.user?.id } });
+    if (!user) {
+      throw res.status(400).json({ message: "Not found user" });
+    }
 
     const todo = new Todo();
+
     todo.title = title;
     todo.isDone = isDone;
-    if (user) {
-      todo.user = user;
-    }
+    todo.subTitle = subTitle;
+
+    todo.task = task;
+
+    todo.user = user;
 
     await todo.save();
 
@@ -32,7 +43,7 @@ const getTodos = async (req: Request, res: Response) => {
     if (!user) {
       throw res.status(400).json({ message: "Not found user" });
     }
-    const todos = await Todo.findBy({ user });
+    const todos = await Todo.findBy({ user, isDone: false });
 
     res.status(200).json({ message: "Get todos successfully", todos });
   } catch (error) {
@@ -41,7 +52,7 @@ const getTodos = async (req: Request, res: Response) => {
 };
 
 const updateTodo = async (req: Request, res: Response) => {
-  const { id, title, subTitle, atDate, isDone, color } = req.body;
+  const { id, title, subTitle, isDone } = req.body;
 
   try {
     const user = await User.findOneBy({ id: req.user?.id });
@@ -62,40 +73,13 @@ const updateTodo = async (req: Request, res: Response) => {
     if ((req.body, title !== undefined)) updateFields.title = req.body.title;
     if ((req.body, subTitle !== undefined))
       updateFields.subTitle = req.body.subTitle;
-    if ((req.body, atDate !== undefined)) updateFields.atDate = req.body.atDate;
     if ((req.body, isDone !== undefined)) updateFields.isDone = req.body.isDone;
-    if ((req.body, color !== undefined)) updateFields.color = req.body.color;
 
-    await Todo.update({ id }, updateFields);
+    const newTodo = await Todo.update({ id }, updateFields);
 
-    res.status(200).json({ message: "Update todo successfully", todo });
+    res.status(200).json({ message: "Update todo successfully", newTodo });
   } catch (error) {
     res.status(500).json({ message: "updateTodo", error });
-  }
-};
-
-const updateTodoIsDone = async (req: Request, res: Response) => {
-  const { id, isDone } = req.body;
-
-  try {
-    const user = await User.findOneBy({ id: req.user?.id });
-
-    if (!user) {
-      throw res.status(400).json({ message: "Not found user" });
-    }
-
-    const todo = await Todo.findOneBy({ id, user });
-    if (!todo) {
-      throw res
-        .status(400)
-        .json({ message: "Not found todo or don't have permission" });
-    }
-
-    await Todo.update({ id }, { isDone });
-
-    res.status(200).json({ message: "Update isDone of todo successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "updateTodoIsDone", error });
   }
 };
 
@@ -125,4 +109,4 @@ const removeTodo = async (req: Request, res: Response) => {
   }
 };
 
-export { createTodo, getTodos, updateTodo, updateTodoIsDone, removeTodo };
+export { createTodo, getTodos, updateTodo, removeTodo };

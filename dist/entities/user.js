@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = exports.Gender = void 0;
 const typeorm_1 = require("typeorm");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const todo_1 = require("./todo");
+const task_1 = require("./task");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "male";
@@ -47,6 +49,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => todo_1.Todo, (todo) => todo.user),
+    __metadata("design:type", Array)
+], User.prototype, "todos", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => task_1.Task, (task) => task.user),
+    __metadata("design:type", Array)
+], User.prototype, "tasks", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

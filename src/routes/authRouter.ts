@@ -11,8 +11,13 @@ import {
   getTodos,
   removeTodo,
   updateTodo,
-  updateTodoIsDone,
 } from "../controllers/todoController";
+import {
+  createTask,
+  getTasks,
+  removeTask,
+  updateTask,
+} from "../controllers/taskController";
 
 const router = express.Router();
 
@@ -24,8 +29,11 @@ router.patch("/updateUser", authenticateUser, updateUser);
 
 router.post("/createTodo", authenticateUser, createTodo);
 router.get("/getTodos", authenticateUser, getTodos);
-router.patch("/updateTodoIsDone", authenticateUser, updateTodoIsDone);
 router.patch("/updateTodo", authenticateUser, updateTodo);
 router.delete("/removeTodo", authenticateUser, removeTodo);
 
+router.post("/createTask", authenticateUser, createTask);
+router.get("/getTasks", authenticateUser, getTasks);
+router.patch("/updateTask", authenticateUser, updateTask);
+router.delete("/removeTask", authenticateUser, removeTask);
 export default router;
