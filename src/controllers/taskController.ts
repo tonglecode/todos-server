@@ -8,13 +8,13 @@ const getTasks = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { id: req.user?.id } });
 
     if (!user) {
-      throw res.status(400).json({ message: "Not found user" });
+      return res.status(400).json({ message: "Not found user" });
     }
     const tasks = await Task.findBy({ user: user });
 
-    res.status(200).json({ message: "Get tasks successfully", tasks });
+    return res.status(200).json({ message: "Get tasks successfully", tasks });
   } catch (error) {
-    res.status(500).json({ message: "getTasks", error });
+    return res.status(500).json({ message: "getTasks", error });
   }
 };
 
@@ -23,7 +23,7 @@ const createTask = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ where: { id: req.user?.id } });
     if (!user) {
-      throw res.status(400).json({ message: "Not found user" });
+      return res.status(400).json({ message: "Not found user" });
     }
 
     const existTask = await Task.findOne({
@@ -31,7 +31,7 @@ const createTask = async (req: Request, res: Response) => {
     });
 
     if (existTask) {
-      throw res.status(400).json({ message: "Already Task" });
+      return res.status(400).json({ message: "Already Task" });
     }
 
     const task = new Task();
@@ -44,9 +44,11 @@ const createTask = async (req: Request, res: Response) => {
 
     await task.save();
     const { user: _, ...withoutUser } = task;
-    res.status(200).json({ message: "Todo created successfully", withoutUser });
+    return res
+      .status(200)
+      .json({ message: "Todo created successfully", withoutUser });
   } catch (error) {
-    res.status(500).json({ message: "Error creating task", error });
+    return res.status(500).json({ message: "Error creating task", error });
   }
 };
 
@@ -57,12 +59,12 @@ const updateTask = async (req: Request, res: Response) => {
     const user = await User.findOneBy({ id: req.user?.id });
 
     if (!user) {
-      throw res.status(400).json({ message: "Not found user" });
+      return res.status(400).json({ message: "Not found user" });
     }
 
     const task = await Task.findOneBy({ id, user });
     if (!task) {
-      throw res
+      return res
         .status(400)
         .json({ message: "Not found task or don't have permission" });
     }
@@ -76,9 +78,9 @@ const updateTask = async (req: Request, res: Response) => {
     const newTask = await Task.update({ id }, updateFields);
     console.log(newTask);
 
-    res.status(200).json({ message: "Update task successfully" });
+    return res.status(200).json({ message: "Update task successfully" });
   } catch (error) {
-    res.status(500).json({ message: "updateTask", error });
+    return res.status(500).json({ message: "updateTask", error });
   }
 };
 
@@ -89,7 +91,7 @@ const removeTask = async (req: Request, res: Response) => {
     const user = await User.findOneBy({ id: req.user?.id });
 
     if (!user) {
-      throw res.status(400).json({ message: "Not found user" });
+      return res.status(400).json({ message: "Not found user" });
     }
 
     const task = await Task.findOneBy({ id, user });
@@ -100,9 +102,9 @@ const removeTask = async (req: Request, res: Response) => {
     }
     await Task.delete({ id });
 
-    res.status(200).json({ message: "deleted task" });
+    return res.status(200).json({ message: "deleted task" });
   } catch (error) {
-    res.status(500).json({ message: "removeTask", error });
+    return res.status(500).json({ message: "removeTask", error });
   }
 };
 
