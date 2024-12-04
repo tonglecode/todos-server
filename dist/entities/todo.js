@@ -29,10 +29,16 @@ __decorate([
     __metadata("design:type", user_1.default)
 ], Todo.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => task_1.Task, (task) => task.todos, { onDelete: "CASCADE" }),
+    (0, typeorm_1.ManyToOne)(() => task_1.Task, (task) => task.todos, {
+        onDelete: "CASCADE",
+    }),
     (0, typeorm_1.JoinColumn)({ name: "taskId" }),
     __metadata("design:type", task_1.Task)
 ], Todo.prototype, "task", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], Todo.prototype, "taskId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)

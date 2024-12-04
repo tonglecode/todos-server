@@ -18,9 +18,14 @@ export class Todo extends BaseEntity {
   @JoinColumn({ name: "userId" })
   user: User;
 
-  @ManyToOne(() => Task, (task) => task.todos, { onDelete: "CASCADE" })
+  @ManyToOne(() => Task, (task) => task.todos, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "taskId" })
   task: Task;
+
+  @Column()
+  taskId: number;
 
   @Column()
   title: string;
