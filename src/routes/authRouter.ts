@@ -3,6 +3,7 @@ import {
   registerUser,
   loginUser,
   logoutUser,
+  googleLogin,
 } from "../controllers/authController";
 import { authenticateUser } from "../middleWare/authenticateUser";
 import { updateUser } from "../controllers/userController";
@@ -24,6 +25,7 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+router.post("/google", googleLogin);
 
 router.patch("/updateUser", authenticateUser, updateUser);
 
