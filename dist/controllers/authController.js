@@ -3,17 +3,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutUser = exports.loginUser = exports.registerUser = void 0;
+exports.logoutUser = exports.loginUser = exports.registerUser = exports.googleLogin = void 0;
 const user_1 = __importDefault(require("../entities/user"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const redisClient_1 = require("../redisClient");
+const google_auth_library_1 = require("google-auth-library");
+const googleLogin = async (req, res) => {
+    const { credential } = req.body;
+    const client = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (!payload) {
+            return res.status(400).json({ message: "Invalid token" });
+        }
+        const { email, name, picture } = payload;
+        let user = await user_1.default.findOneBy({ email });
+        if (!user) {
+            user = new user_1.default();
+            user.email = email || "";
+            user.name = name || "";
+            user.PASSWORD = Math.random().toString(36).slice(-8);
+            if (picture) {
+                user.photoBase64 = picture;
+            }
+            await user.save();
+        }
+        const token = jsonwebtoken_1.default.sign({ id: user.id }, "your_jwt_secret", {
+            expiresIn: "7d",
+        });
+        await redisClient_1.redisClient.set(token, String(user.id), {
+            EX: 10 * 60,
+        });
+        return res.json({ token });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error google logging in", error });
+    }
+};
+exports.googleLogin = googleLogin;
 const registerUser = async (req, res) => {
-    const { name, email, password, photoBase64 } = req.body;
+    const { name, email, PASSWORD, photoBase64 } = req.body;
     try {
         const user = new user_1.default();
         user.name = name;
         user.email = email;
-        user.password = password;
+        user.PASSWORD = PASSWORD;
         user.photoBase64 = photoBase64;
         await user.save();
         return res.status(201).json({ message: "User created successfully", user });
@@ -25,18 +64,18 @@ const registerUser = async (req, res) => {
 };
 exports.registerUser = registerUser;
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
+    const { email, PASSWORD } = req.body;
+    if (!email || !PASSWORD) {
+        return res.status(400).json({ message: "Email and PASSWORD are required" });
     }
     try {
         const user = await user_1.default.findOneBy({ email });
         if (!user) {
-            return res.status(400).json({ message: "Invalid email or password" });
+            return res.status(400).json({ message: "Invalid email or PASSWORD" });
         }
-        const isMatch = await user.comparePassword(password);
+        const isMatch = await user.comparePASSWORD(PASSWORD);
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid email or password" });
+            return res.status(400).json({ message: "Invalid email or PASSWORD" });
         }
         const token = jsonwebtoken_1.default.sign({ id: user.id }, "your_jwt_secret", {
             expiresIn: "7d",

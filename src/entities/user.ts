@@ -28,7 +28,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  password: string;
+  PASSWORD: string;
 
   @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[];
@@ -49,13 +49,13 @@ export class User extends BaseEntity {
   gender: Gender;
 
   @BeforeInsert()
-  async hashPassword() {
+  async hashPASSWORD() {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.PASSWORD = await bcrypt.hash(this.PASSWORD, salt);
   }
 
-  async comparePassword(enteredPassword: string): Promise<boolean> {
-    return await bcrypt.compare(enteredPassword, this.password);
+  async comparePASSWORD(enteredPASSWORD: string): Promise<boolean> {
+    return await bcrypt.compare(enteredPASSWORD, this.PASSWORD);
   }
 }
 

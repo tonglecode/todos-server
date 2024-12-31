@@ -3,6 +3,7 @@ import authRouter from "./routes/authRouter";
 import AppDataSource from "./data-source";
 import { connectRedis } from "./redisClient";
 import { authenticateUser } from "./middleWare/authenticateUser";
+
 const cors = require("cors");
 
 const app = express();
@@ -25,7 +26,7 @@ connectRedis()
     console.error("Error connecting to Redis:", err);
   });
 
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3003" }));
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json(req.user);

@@ -24,12 +24,12 @@ var Gender;
     Gender["OTHER"] = "other";
 })(Gender || (exports.Gender = Gender = {}));
 let User = class User extends typeorm_1.BaseEntity {
-    async hashPassword() {
+    async hashPASSWORD() {
         const salt = await bcryptjs_1.default.genSalt(10);
-        this.password = await bcryptjs_1.default.hash(this.password, salt);
+        this.PASSWORD = await bcryptjs_1.default.hash(this.PASSWORD, salt);
     }
-    async comparePassword(enteredPassword) {
-        return await bcryptjs_1.default.compare(enteredPassword, this.password);
+    async comparePASSWORD(enteredPASSWORD) {
+        return await bcryptjs_1.default.compare(enteredPASSWORD, this.PASSWORD);
     }
 };
 exports.User = User;
@@ -48,7 +48,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "password", void 0);
+], User.prototype, "PASSWORD", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => todo_1.Todo, (todo) => todo.user),
     __metadata("design:type", Array)
@@ -78,7 +78,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], User.prototype, "hashPassword", null);
+], User.prototype, "hashPASSWORD", null);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
