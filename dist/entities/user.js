@@ -17,6 +17,7 @@ const typeorm_1 = require("typeorm");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const todo_1 = require("./todo");
 const task_1 = require("./task");
+const convertImageUrlToBase64_1 = require("../utilities/convertImageUrlToBase64");
 var Gender;
 (function (Gender) {
     Gender["MALE"] = "male";
@@ -24,12 +25,18 @@ var Gender;
     Gender["OTHER"] = "other";
 })(Gender || (exports.Gender = Gender = {}));
 let User = class User extends typeorm_1.BaseEntity {
-    async hashPASSWORD() {
+    async beforeInsert() {
         const salt = await bcryptjs_1.default.genSalt(10);
-        this.PASSWORD = await bcryptjs_1.default.hash(this.PASSWORD, salt);
+        this.password = await bcryptjs_1.default.hash(this.password, salt);
+        if (this.picture) {
+            const base64Image = await (0, convertImageUrlToBase64_1.convertImageUrlToBase64)(this.picture);
+            if (base64Image !== null) {
+                this.photoBase64 = base64Image;
+            }
+        }
     }
     async comparePASSWORD(enteredPASSWORD) {
-        return await bcryptjs_1.default.compare(enteredPASSWORD, this.PASSWORD);
+        return await bcryptjs_1.default.compare(enteredPASSWORD, this.password);
     }
 };
 exports.User = User;
@@ -48,7 +55,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "PASSWORD", void 0);
+], User.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => todo_1.Todo, (todo) => todo.user),
     __metadata("design:type", Array)
@@ -61,6 +68,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "photoBase64", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "picture", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
@@ -78,7 +89,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], User.prototype, "hashPASSWORD", null);
+], User.prototype, "beforeInsert", null);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

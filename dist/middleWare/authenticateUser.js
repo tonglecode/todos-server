@@ -34,7 +34,7 @@ const authenticateUser = async (req, res, next) => {
         if (!user || user.length === 0) {
             return res.status(401).json({ message: "User not found" });
         }
-        const _b = user[0], { PASSWORD, photoBase64 } = _b, withoutPASSWORD = __rest(_b, ["PASSWORD", "photoBase64"]);
+        const _b = user[0], { password: PASSWORD } = _b, withoutPASSWORD = __rest(_b, ["password"]);
         req.user = withoutPASSWORD;
         next();
     }

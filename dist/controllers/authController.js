@@ -26,12 +26,11 @@ const googleLogin = async (req, res) => {
             user = new user_1.default();
             user.email = email || "";
             user.name = name || "";
-            user.PASSWORD = Math.random().toString(36).slice(-8);
-            if (picture) {
-                user.photoBase64 = picture;
-            }
+            user.password = Math.random().toString(36).slice(-8);
+            user.picture = picture || "";
             await user.save();
         }
+        console.log("user", user);
         const token = jsonwebtoken_1.default.sign({ id: user.id }, "your_jwt_secret", {
             expiresIn: "7d",
         });
@@ -52,7 +51,7 @@ const registerUser = async (req, res) => {
         const user = new user_1.default();
         user.name = name;
         user.email = email;
-        user.PASSWORD = PASSWORD;
+        user.password = PASSWORD;
         user.photoBase64 = photoBase64;
         await user.save();
         return res.status(201).json({ message: "User created successfully", user });

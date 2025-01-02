@@ -5,10 +5,12 @@ import {
   BeforeInsert,
   BaseEntity,
   OneToMany,
+  BeforeUpdate,
 } from "typeorm";
 import bcrypt from "bcryptjs";
 import { Todo } from "./todo";
 import { Task } from "./task";
+import { convertImageUrlToBase64 } from "../utilities/convertImageUrlToBase64";
 
 export enum Gender {
   MALE = "male",
@@ -28,7 +30,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  PASSWORD: string;
+  password: string;
 
   @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[];
@@ -40,6 +42,9 @@ export class User extends BaseEntity {
   photoBase64: string;
 
   @Column({ nullable: true })
+  picture: string;
+
+  @Column({ nullable: true })
   address: string;
 
   @Column({ nullable: true })
@@ -49,13 +54,22 @@ export class User extends BaseEntity {
   gender: Gender;
 
   @BeforeInsert()
-  async hashPASSWORD() {
+  async beforeInsert(): Promise<void> {
+    // 비밀번호 해시화
     const salt = await bcrypt.genSalt(10);
-    this.PASSWORD = await bcrypt.hash(this.PASSWORD, salt);
+    this.password = await bcrypt.hash(this.password, salt);
+
+    // 이미지 변환
+    if (this.picture) {
+      const base64Image = await convertImageUrlToBase64(this.picture);
+      if (base64Image !== null) {
+        this.photoBase64 = base64Image;
+      }
+    }
   }
 
   async comparePASSWORD(enteredPASSWORD: string): Promise<boolean> {
-    return await bcrypt.compare(enteredPASSWORD, this.PASSWORD);
+    return await bcrypt.compare(enteredPASSWORD, this.password);
   }
 }
 

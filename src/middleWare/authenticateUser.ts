@@ -31,7 +31,7 @@ export const authenticateUser = async (
       return res.status(401).json({ message: "User not found" });
     }
 
-    const { PASSWORD, photoBase64, ...withoutPASSWORD } = user[0];
+    const { password: PASSWORD, ...withoutPASSWORD } = user[0];
     req.user = withoutPASSWORD;
     next();
   } catch (error) {

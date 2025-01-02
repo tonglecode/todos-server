@@ -28,13 +28,12 @@ const googleLogin = async (req: Request, res: Response) => {
       user = new User();
       user.email = email || "";
       user.name = name || "";
-      user.PASSWORD = Math.random().toString(36).slice(-8); // 임의 비밀번호
-      if (picture) {
-        // picture URL을 Base64로 변환하는 로직 필요
-        user.photoBase64 = picture;
-      }
+      user.password = Math.random().toString(36).slice(-8); // 임의 비밀번호
+      user.picture = picture || "";
       await user.save();
     }
+
+    console.log("user", user);
 
     const token = jwt.sign({ id: user.id }, "your_jwt_secret", {
       expiresIn: "7d",
@@ -58,7 +57,7 @@ const registerUser = async (req: Request, res: Response) => {
     const user = new User();
     user.name = name;
     user.email = email;
-    user.PASSWORD = PASSWORD;
+    user.password = PASSWORD;
     user.photoBase64 = photoBase64;
 
     await user.save();

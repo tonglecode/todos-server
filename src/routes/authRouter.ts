@@ -19,13 +19,13 @@ import {
   removeTask,
   updateTask,
 } from "../controllers/taskController";
-const cors = require("cors");
+
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
-router.post("/googleLogin", cors(), googleLogin);
+router.post("/googleLogin", googleLogin);
 
 router.patch("/updateUser", authenticateUser, updateUser);
 
