@@ -55,7 +55,7 @@ const createTask = async (req, res) => {
         const { user: _ } = task, withoutUser = __rest(task, ["user"]);
         return res
             .status(200)
-            .json({ message: "Todo created successfully", withoutUser });
+            .json({ message: "Task created successfully", withoutUser });
     }
     catch (error) {
         return res.status(500).json({ message: "Error creating task", error });
@@ -107,7 +107,7 @@ const removeTask = async (req, res) => {
                 .json({ message: "Not found Task or don't have permission" });
         }
         await task_1.Task.delete({ id });
-        return res.status(200).json({ message: "deleted task" });
+        return res.status(200).json({ message: "deleted task", ok: true });
     }
     catch (error) {
         return res.status(500).json({ message: "removeTask", error });

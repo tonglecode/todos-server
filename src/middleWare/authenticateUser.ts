@@ -31,8 +31,8 @@ export const authenticateUser = async (
       return res.status(401).json({ message: "User not found" });
     }
 
-    const { password, photoBase64, ...withoutPassword } = user[0];
-    req.user = withoutPassword;
+    const { password: PASSWORD, ...withoutPASSWORD } = user[0];
+    req.user = withoutPASSWORD;
     next();
   } catch (error) {
     console.error("Token verification error:", error);

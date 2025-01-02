@@ -13,6 +13,7 @@ const router = express_1.default.Router();
 router.post("/register", authController_1.registerUser);
 router.post("/login", authController_1.loginUser);
 router.post("/logout", authController_1.logoutUser);
+router.post("/googleLogin", authController_1.googleLogin);
 router.patch("/updateUser", authenticateUser_1.authenticateUser, userController_1.updateUser);
 router.post("/createTodo", authenticateUser_1.authenticateUser, todoController_1.createTodo);
 router.get("/getTodos", authenticateUser_1.authenticateUser, todoController_1.getTodos);
