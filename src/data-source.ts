@@ -5,11 +5,7 @@ import { Task } from "./entities/task";
 
 const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: "todos",
+  url: process.env.DATABASE_URL,
   synchronize: true,
   logging: false,
   entities: [User, Todo, Task], // 엔티티를 추가합니다.

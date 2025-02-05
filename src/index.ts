@@ -26,7 +26,15 @@ connectRedis()
     console.error("Error connecting to Redis:", err);
   });
 
-app.use(cors({ origin: "http://localhost:3003" }));
+app.use(
+  cors({
+    origin: [
+      "https://mytodos.tongle.kr",
+      "http://localhost:3003", // 개발 환경용
+    ],
+    credentials: true,
+  })
+);
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json(req.user);
