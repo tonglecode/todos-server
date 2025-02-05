@@ -5,7 +5,6 @@ import {
   BeforeInsert,
   BaseEntity,
   OneToMany,
-  BeforeUpdate,
 } from "typeorm";
 import bcrypt from "bcryptjs";
 import { Todo } from "./todo";

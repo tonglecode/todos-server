@@ -9,11 +9,7 @@ const todo_1 = require("./entities/todo");
 const task_1 = require("./entities/task");
 const AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    database: "todos",
+    url: process.env.DATABASE_URL,
     synchronize: true,
     logging: false,
     entities: [user_1.default, todo_1.Todo, task_1.Task],

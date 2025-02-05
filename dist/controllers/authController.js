@@ -46,12 +46,12 @@ const googleLogin = async (req, res) => {
 };
 exports.googleLogin = googleLogin;
 const registerUser = async (req, res) => {
-    const { name, email, PASSWORD, photoBase64 } = req.body;
+    const { name, email, password, photoBase64 } = req.body;
     try {
         const user = new user_1.default();
         user.name = name;
         user.email = email;
-        user.password = PASSWORD;
+        user.password = password;
         user.photoBase64 = photoBase64;
         await user.save();
         return res.status(201).json({ message: "User created successfully", user });
@@ -63,8 +63,8 @@ const registerUser = async (req, res) => {
 };
 exports.registerUser = registerUser;
 const loginUser = async (req, res) => {
-    const { email, PASSWORD } = req.body;
-    if (!email || !PASSWORD) {
+    const { email, password } = req.body;
+    if (!email || !password) {
         return res.status(400).json({ message: "Email and PASSWORD are required" });
     }
     try {
@@ -72,7 +72,7 @@ const loginUser = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "Invalid email or PASSWORD" });
         }
-        const isMatch = await user.comparePASSWORD(PASSWORD);
+        const isMatch = await user.comparePASSWORD(password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid email or PASSWORD" });
         }
